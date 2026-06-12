@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanças Pessoais</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>Finanças <span>pessoais</span></h1>
+
+    <div class="grid">
+
+        <!-- RENDA -->
+        <div class="card">
+            <h2 class="card-titulo renda">Renda</h2>
+
+            <div class="campo">
+                <label for="renda">Renda </label>
+                <input type="number" id="renda" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="rendaExtra">Renda extra </label>
+                <input type="number" id="rendaExtra" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="tipoRenda">Frequência do pagamento</label>
+                <select id="tipoRenda">
+                    <option value="1">Mensal</option>
+                    <option value="2">Quinzenal</option>
+                    <option value="4">Semanal</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- DESPESAS FIXAS -->
+        <div class="card">
+            <h2 class="card-titulo fixas">Despesas fixas</h2>
+
+            <div class="campo">
+                <label for="aluguelFinanciamento">Aluguel / financiamento </label>
+                <input type="number" id="aluguelFinanciamento" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="contasFixas">Contas fixas — luz, água, internet </label>
+                <input type="number" id="contasFixas" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="transporte">Transporte </label>
+                <input type="number" id="transporte" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="alimentacao">Alimentação </label>
+                <input type="number" id="alimentacao" placeholder="0,00" min="0">
+            </div>
+        </div>
+
+        <!-- DESPESAS VARIÁVEIS -->
+        <div class="card">
+            <h2 class="card-titulo variaveis">Despesas variáveis</h2>
+
+            <div class="campo">
+                <label for="lazer">Lazer e entretenimento </label>
+                <input type="number" id="lazer" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="saudeEFarmacia">Saúde e farmácia </label>
+                <input type="number" id="saudeEFarmacia" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="educacao">Educação / cursos </label>
+                <input type="number" id="educacao" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="outros">Outros gastos </label>
+                <input type="number" id="outros" placeholder="0,00" min="0">
+            </div>
+        </div>
+
+        <!-- METAS -->
+        <div class="card">
+            <h2 class="card-titulo metas">Metas e configuração</h2>
+
+            <div class="campo">
+                <label for="meta">Meta de economia</label>
+                <div class="range-wrap">
+                    <input type="range" id="meta" min="0" max="50" step="1" value="20">
+                    <span id="metaValor">20%</span>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="valorInvestido">Valor investido por mês </label>
+                <input type="number" id="valorInvestido" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="parcelas">Parcelas do cartão </label>
+                <input type="number" id="parcelas" placeholder="0,00" min="0">
+            </div>
+
+            <div class="campo">
+                <label for="moeda">Moeda exibida</label>
+                <select id="moeda">
+                    <option value="BRL">R$ — Real</option>
+                    <option value="USD">US$ — Dólar</option>
+                    <option value="EUR">€ — Euro</option>
+                    <option value="GBP">£ — Libra</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- CADASTRO -->
+        <div class="dashboard opcoes-extras">
+            <p class="dash-titulo">Cadastro de pessoas</p>
+
+            <div class="campos-cadastro">
+                <div class="campo">
+                    <label for="nome">Nome completo</label>
+                    <input type="text" id="nome" placeholder="Ex: João Silva" oninput="preencherNome()">
+                </div>
+                <div class="campo">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" placeholder="000.000.000-00" maxlength="14" oninput="preencherCPF()">
+                </div>
+                <div class="campo">
+                    <label for="telefone">Telefone</label>
+                    <input type="text" id="telefone" placeholder="(00) 00000-0000" maxlength="15"
+                        oninput="preencherTelefone()">
+                </div>
+            </div>
+
+            <div class="botoes-cadastro">
+                <button class="btn-cad btn-salvar" onclick="salvar()">Salvar</button>
+                <button class="btn-cad btn-localizar" onclick="localizar()">Localizar</button>
+                <button class="btn-cad btn-editar" onclick="editar()">Editar</button>
+                <button class="btn-cad btn-deletar" onclick="deletar()">Deletar</button>
+                <button class="btn-cad btn-listar" onclick="listar()">Listar</button>
+            </div>
+
+            <p id="cadMsg"></p>
+            <div id="ilistados"></div>
+        </div>
+
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard">
+        <p class="dash-titulo">Resultado em tempo real</p>
+
+        <div class="metricas">
+            <div class="metrica">
+                <span class="metrica-label">Renda total</span>
+                <span class="metrica-valor" id="outRenda">R$ 0</span>
+            </div>
+            <div class="metrica">
+                <span class="metrica-label">Total de gastos</span>
+                <span class="metrica-valor" id="outGastos">R$ 0</span>
+            </div>
+            <div class="metrica">
+                <span class="metrica-label">Saldo livre</span>
+                <span class="metrica-valor" id="outSaldo">R$ 0</span>
+            </div>
+            <div class="metrica">
+                <span class="metrica-label">Economia real</span>
+                <span class="metrica-valor" id="outPct">0%</span>
+            </div>
+        </div>
+
+        <div class="barra-wrap">
+            <div class="barra-labels">
+                <span>Gastos em relação à renda</span>
+                <span id="barraPct">0%</span>
+            </div>
+            <div class="barra-fundo">
+                <div class="barra-preenchimento" id="barraFill"></div>
+            </div>
+        </div>
+
+        <div class="alerta" id="alerta">
+            <div class="alerta-ponto"></div>
+            <span id="alertaTexto">Preencha os campos acima para ver o resultado.</span>
+        </div>
+
+        <div class="breakdown">
+            <div class="breakdown-linha">
+                <span class="breakdown-nome">Fixas</span>
+                <div class="breakdown-fundo">
+                    <div class="breakdown-fill" id="barFixas" style="background:#ff5c5c"></div>
+                </div>
+                <span class="breakdown-pct" id="pctFixas">0%</span>
+            </div>
+            <div class="breakdown-linha">
+                <span class="breakdown-nome">Variáveis</span>
+                <div class="breakdown-fundo">
+                    <div class="breakdown-fill" id="barVariaveis" style="background:#ffb547"></div>
+                </div>
+                <span class="breakdown-pct" id="pctVariaveis">0%</span>
+            </div>
+            <div class="breakdown-linha">
+                <span class="breakdown-nome">Investimento</span>
+                <div class="breakdown-fundo">
+                    <div class="breakdown-fill" id="barInvest" style="background:#5c9fff"></div>
+                </div>
+                <span class="breakdown-pct" id="pctInvest">0%</span>
+            </div>
+            <div class="breakdown-linha">
+                <span class="breakdown-nome">Livre</span>
+                <div class="breakdown-fundo">
+                    <div class="breakdown-fill" id="barLivre" style="background:#c8f55a"></div>
+                </div>
+                <span class="breakdown-pct" id="pctLivre">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // ════════════════════════════════════════════════════════
+        //  CALCULADORA FINANCEIRA
+        // ════════════════════════════════════════════════════════
+
+        class renda {
+            renda = 0;
+            extra = 0;
+            frequencia = 1;
+        }
+
+        class despesas {
+            aluguel = 0;
+            contasFixas = 0;
+            alimentacao = 0;
+            transporte = 0;
+            lazer = 0;
+            saude = 0;
+            educacao = 0;
+            parcelas = 0;
+            outras = 0;
+        }
+
+        class metas {
+            valorMeta = 0;
+            prazo = 0;
+        }
+
+        function calcular() {
+
+            // ── Lendo renda ────────────────────────────────────────────
+            let r = new renda();
+            r.renda = parseFloat(document.getElementById("renda").value) || 0;
+            r.extra = parseFloat(document.getElementById("rendaExtra").value) || 0;
+            r.frequencia = parseInt(document.getElementById("tipoRenda").value) || 1;
+
+            // ── Lendo despesas ─────────────────────────────────────────
+            let d = new despesas();
+            d.aluguel = parseFloat(document.getElementById("aluguelFinanciamento").value) || 0;
+            d.contasFixas = parseFloat(document.getElementById("contasFixas").value) || 0;
+            d.alimentacao = parseFloat(document.getElementById("alimentacao").value) || 0;
+            d.transporte = parseFloat(document.getElementById("transporte").value) || 0;
+            d.lazer = parseFloat(document.getElementById("lazer").value) || 0;
+            d.saude = parseFloat(document.getElementById("saudeEFarmacia").value) || 0;
+            d.educacao = parseFloat(document.getElementById("educacao").value) || 0;
+            d.parcelas = parseFloat(document.getElementById("parcelas").value) || 0;
+            d.outras = parseFloat(document.getElementById("outros").value) || 0;
+
+            // ── Lendo metas e configurações ────────────────────────────
+            let metaPct = parseInt(document.getElementById("meta").value) || 0;
+            let totalInvestido = parseFloat(document.getElementById("valorInvestido").value) || 0;
+
+            // ── Lendo a moeda escolhida ────────────────────────────────
+            let moedaSelecionada = document.getElementById("moeda").value;
+
+            let simbolo = "R$";
+            if (moedaSelecionada === "USD") simbolo = "US$";
+            if (moedaSelecionada === "EUR") simbolo = "€";
+            if (moedaSelecionada === "GBP") simbolo = "£";
+
+            // ── Calculando totais ──────────────────────────────────────
+            let totalRenda = (r.renda * r.frequencia) + r.extra;
+            let totalFixas = d.aluguel + d.contasFixas + d.alimentacao + d.transporte;
+            let totalVariaveis = d.lazer + d.saude + d.educacao + d.parcelas + d.outras;
+            let totalDespesas = totalFixas + totalVariaveis;
+            let saldo = totalRenda - totalDespesas - totalInvestido;
+
+            // ── Calculando porcentagens ────────────────────────────────
+            // Cada porcentagem responde: "quanto isso representa da renda total?"
+            // Se a renda for 0, ficam todas em 0 para evitar divisão por zero
+
+            let pctFixas = 0;
+            let pctVariaveis = 0;
+            let pctInvest = 0;
+            let pctSaldo = 0;
+            let pctGastoTotal = 0;
+
+            if (totalRenda > 0) {
+                pctFixas = (totalFixas / totalRenda) * 100;
+                pctVariaveis = (totalVariaveis / totalRenda) * 100;
+                pctInvest = (totalInvestido / totalRenda) * 100;
+                pctGastoTotal = (totalDespesas / totalRenda) * 100;
+                pctSaldo = (saldo / totalRenda) * 100;
+            }
+
+            // Limita cada barra entre 0% e 100% para não quebrar o layout
+            let pctFixasLimitado = Math.min(pctFixas, 100);
+            let pctVariaveisLimitado = Math.min(pctVariaveis, 100);
+            let pctInvestLimitado = Math.min(pctInvest, 100);
+            let pctSaldoLimitado = Math.max(Math.min(pctSaldo, 100), 0);
+            let pctBarraGastos = Math.min(pctGastoTotal, 100);
+
+            // ── Exibindo valores no dashboard ──────────────────────────
+            document.getElementById("outRenda").innerHTML = simbolo + " " + totalRenda.toFixed(2);
+            document.getElementById("outGastos").innerHTML = simbolo + " " + totalDespesas.toFixed(2);
+            document.getElementById("outSaldo").innerHTML = simbolo + " " + saldo.toFixed(2);
+            document.getElementById("outPct").innerHTML = pctSaldo.toFixed(1) + "%";
+
+            // ── Atualizando a barra principal de gastos ────────────────
+            document.getElementById("barraFill").style.width = pctBarraGastos + "%";
+            document.getElementById("barraPct").innerHTML = pctGastoTotal.toFixed(1) + "%";
+
+            let barraEl = document.getElementById("barraFill");
+            if (pctGastoTotal > 90) {
+                barraEl.style.background = "#ff5c5c"; // vermelho: perigoso
+            } else if (pctGastoTotal > 70) {
+                barraEl.style.background = "#ffb547"; // amarelo: atenção
+            } else {
+                barraEl.style.background = "#c8f55a"; // verde: saudável
+            }
+
+            // ── Atualizando as barras do breakdown ─────────────────────
+            document.getElementById("barFixas").style.width = pctFixasLimitado + "%";
+            document.getElementById("barVariaveis").style.width = pctVariaveisLimitado + "%";
+            document.getElementById("barInvest").style.width = pctInvestLimitado + "%";
+            document.getElementById("barLivre").style.width = pctSaldoLimitado + "%";
+
+            document.getElementById("pctFixas").innerHTML = pctFixas.toFixed(1) + "%";
+            document.getElementById("pctVariaveis").innerHTML = pctVariaveis.toFixed(1) + "%";
+            document.getElementById("pctInvest").innerHTML = pctInvest.toFixed(1) + "%";
+            document.getElementById("pctLivre").innerHTML = pctSaldo.toFixed(1) + "%";
+
+            // ── Alerta de situação financeira ──────────────────────────
+            let alertaEl = document.getElementById("alerta");
+            let alertaTexto = document.getElementById("alertaTexto");
+
+            if (totalRenda === 0) {
+                alertaEl.className = "alerta neutro";
+                alertaTexto.innerHTML = "Preencha os campos acima para ver o resultado.";
+            } else if (saldo < 0) {
+                alertaEl.className = "alerta ruim";
+                alertaTexto.innerHTML = "Seus gastos ultrapassam sua renda em " + simbolo + " " + Math.abs(saldo).toFixed(2) + ".";
+            } else if (metaPct > 0 && pctSaldo >= metaPct) {
+                alertaEl.className = "alerta ok";
+                alertaTexto.innerHTML = "Meta atingida! Você está economizando " + pctSaldo.toFixed(1) + "% (meta: " + metaPct + "%).";
+            } else if (metaPct > 0 && pctSaldo < metaPct) {
+                alertaEl.className = "alerta ruim";
+                alertaTexto.innerHTML = "Abaixo da meta: você economiza " + pctSaldo.toFixed(1) + "% mas quer " + metaPct + "%.";
+            } else {
+                alertaEl.className = "alerta ok";
+                alertaTexto.innerHTML = "Saldo livre: " + simbolo + " " + saldo.toFixed(2) + " (" + pctSaldo.toFixed(1) + "% da renda).";
+            }
+        }
+
+        document.getElementById("meta").addEventListener("input", function () {
+            document.getElementById("metaValor").innerHTML = this.value + "%";
+        });
+
+        let todosOsCampos = document.querySelectorAll("input, select");
+        for (let i = 0; i < todosOsCampos.length; i++) {
+            todosOsCampos[i].addEventListener("input", calcular);
+        }
+
+        calcular();
+
+
+        // ════════════════════════════════════════════════════════
+        //  CADASTRO DE PESSOAS
+        // ════════════════════════════════════════════════════════
+
+        // Lista onde todas as pessoas ficam salvas
+        let listaPessoas = [];
+
+        // Guarda o índice da pessoa localizada (-1 = ninguém localizado)
+        let encontrada = -1;
+
+        class pessoas {
+            nome;
+            cpf;
+            tel;
+            renda;
+            rendaExtra;
+            tipoRenda;
+            aluguel;
+            contasFixas;
+            transporte;
+            alimentacao;
+            lazer;
+            saude;
+            educacao;
+            parcelas;
+            outras;
+            valorInvestido;
+        }
+
+        // Mostra mensagem de feedback embaixo dos botões
+        function setMsg(texto) {
+            document.getElementById("cadMsg").innerHTML = texto;
+        }
+
+        // Limpa os três campos do formulário
+        function limparCadastro() {
+            document.getElementById("nome").value = "";
+            document.getElementById("cpf").value = "";
+            document.getElementById("telefone").value = "";
+            document.getElementById("renda").value = ""
+            document.getElementById("rendaExtra").value = "";
+            document.getElementById("tipoRenda").value = "";
+            document.getElementById("aluguelFinanciamento").value = "";
+            document.getElementById("contasFixas").value = "";
+            document.getElementById("alimentacao").value = "";
+            document.getElementById("transporte").value = "";
+            document.getElementById("lazer").value = "";
+            document.getElementById("saudeEFarmacia").value = "";
+            document.getElementById("educacao").value = "";
+            document.getElementById("parcelas").value = "";
+            document.getElementById("outros").value = "";
+            document.getElementById("valorInvestido").value = "";
+        }
+
+        // ── Máscaras (formatação automática ao digitar) ────────────────
+
+        function preencherNome() {
+            let nomeEl = document.getElementById("nome");
+            let texto = nomeEl.value;
+            let resultado = "";
+
+            for (let i = 0; i < texto.length; i++) {
+                let letra = texto[i];
+                if (letra < "0" || letra > "9") {
+                    resultado += letra;
+                }
+            }
+
+            nomeEl.value = resultado;
+        }
+
+        function preencherCPF() {
+            let el = document.getElementById("cpf");
+            let texto = el.value;
+
+            // pega só os números, igual ao preencherNome mas ao contrário
+            let numeros = "";
+            for (let i = 0; i < texto.length; i++) {
+                let letra = texto[i];
+                if (letra >= "0" && letra <= "9") {
+                    numeros += letra;
+                }
+            }
+
+            // limita a 11 dígitos
+            if (numeros.length > 11) {
+                numeros = numeros.substring(0, 11);
+            }
+
+            // aplica a máscara 000.000.000-00
+            let formatado = "";
+            if (numeros.length === 0) {
+                formatado = "";
+            } else if (numeros.length <= 3) {
+                formatado = numeros;
+            } else if (numeros.length <= 6) {
+                formatado = numeros.substring(0, 3) + "." + numeros.substring(3);
+            } else if (numeros.length <= 9) {
+                formatado = numeros.substring(0, 3) + "." + numeros.substring(3, 6) + "." + numeros.substring(6);
+            } else {
+                formatado = numeros.substring(0, 3) + "." + numeros.substring(3, 6) + "." + numeros.substring(6, 9) + "-" + numeros.substring(9, 11);
+            }
+
+            el.value = formatado;
+        }
+
+        function preencherTelefone() {
+            let el = document.getElementById("telefone");
+            let texto = el.value;
+
+            // pega só os números
+            let numeros = "";
+            for (let i = 0; i < texto.length; i++) {
+                let letra = texto[i];
+                if (letra >= "0" && letra <= "9") {
+                    numeros += letra;
+                }
+            }
+
+            // limita a 11 dígitos
+            if (numeros.length > 11) {
+                numeros = numeros.substring(0, 11);
+            }
+
+            // aplica a máscara (00) 00000-0000
+            let formatado = "";
+            if (numeros.length === 0) {
+                formatado = "";
+            } else if (numeros.length <= 2) {
+                formatado = "(" + numeros;
+            } else if (numeros.length <= 7) {
+                formatado = "(" + numeros.substring(0, 2) + ") " + numeros.substring(2);
+            } else {
+                formatado = "(" + numeros.substring(0, 2) + ") " + numeros.substring(2, 7) + "-" + numeros.substring(7);
+            }
+
+            el.value = formatado;
+        }
+
+        // ── SALVAR ────────────────────────────────────────────────────
+        function salvar() {
+            let nomeDig = document.getElementById("nome").value.trim();
+            let cpfDig = document.getElementById("cpf").value.trim();
+            let telDig = document.getElementById("telefone").value.trim();
+
+            if (nomeDig === "" || cpfDig === "" || telDig === "") {
+                setMsg("Preencha todos os campos antes de salvar.");
+                return;
+            }
+
+            for (let i = 0; i < listaPessoas.length; i++) {
+                if (listaPessoas[i].cpf === cpfDig) {
+                    setMsg("Esse CPF já está cadastrado.");
+                    return;
+                }
+            }
+
+            let p = new pessoas();
+            p.nome = nomeDig;
+            p.cpf = cpfDig;
+            p.tel = telDig;
+            p.renda = document.getElementById("renda").value || "0";
+            p.rendaExtra = document.getElementById("rendaExtra").value || "0";
+            p.tipoRenda = document.getElementById("tipoRenda").value || "1";
+            p.aluguel = document.getElementById("aluguelFinanciamento").value || "0";
+            p.contasFixas = document.getElementById("contasFixas").value || "0";
+            p.transporte = document.getElementById("transporte").value || "0";
+            p.alimentacao = document.getElementById("alimentacao").value || "0";
+            p.lazer = document.getElementById("lazer").value || "0";
+            p.saude = document.getElementById("saudeEFarmacia").value || "0";
+            p.educacao = document.getElementById("educacao").value || "0";
+            p.parcelas = document.getElementById("parcelas").value || "0";
+            p.outras = document.getElementById("outros").value || "0";
+            p.valorInvestido = document.getElementById("valorInvestido").value || "0";
+
+            listaPessoas.push(p);
+            setMsg("Salvo com sucesso! Total: " + listaPessoas.length + " pessoa(s).");
+            limparCadastro();
+        }
+
+        // ── LOCALIZAR ─────────────────────────────────────────────────
+        function localizar() {
+            let cpfBusca = prompt("Digite o CPF para localizar:");
+
+            if (cpfBusca === null || cpfBusca.trim() === "") return;
+
+            encontrada = -1;
+
+            for (let i = 0; i < listaPessoas.length; i++) {
+                if (listaPessoas[i].cpf === cpfBusca.trim()) {
+                    encontrada = i;
+                    break;
+                }
+            }
+
+            if (encontrada === -1) {
+                setMsg("Pessoa não encontrada.");
+                return;
+            }
+
+            let p = listaPessoas[encontrada];
+
+            document.getElementById("nome").value = p.nome;
+            document.getElementById("cpf").value = p.cpf;
+            document.getElementById("telefone").value = p.tel;
+            document.getElementById("renda").value = p.renda;
+            document.getElementById("rendaExtra").value = p.rendaExtra;
+            document.getElementById("tipoRenda").value = p.tipoRenda;
+            document.getElementById("aluguelFinanciamento").value = p.aluguel;
+            document.getElementById("contasFixas").value = p.contasFixas;
+            document.getElementById("transporte").value = p.transporte;
+            document.getElementById("alimentacao").value = p.alimentacao;
+            document.getElementById("lazer").value = p.lazer;
+            document.getElementById("saudeEFarmacia").value = p.saude;
+            document.getElementById("educacao").value = p.educacao;
+            document.getElementById("parcelas").value = p.parcelas;
+            document.getElementById("outros").value = p.outras;
+            document.getElementById("valorInvestido").value = p.valorInvestido;
+
+            calcular();
+            setMsg("Localizado: " + p.nome + " — edite os campos e clique em Editar.");
+        }
+
+        // ── EDITAR ────────────────────────────────────────────────────
+        function editar() {
+            if (encontrada === -1) {
+                setMsg("Localize uma pessoa primeiro.");
+                return;
+            }
+
+            // Salva os novos valores por cima dos antigos
+            listaPessoas[encontrada].nome = document.getElementById("nome").value.trim();
+            listaPessoas[encontrada].cpf = document.getElementById("cpf").value.trim();
+            listaPessoas[encontrada].tel = document.getElementById("telefone").value.trim();
+
+            setMsg("Editado com sucesso!");
+            encontrada = -1;
+            limparCadastro();
+        }
+
+        // ── DELETAR ───────────────────────────────────────────────────
+        function deletar() {
+            if (encontrada === -1) {
+                setMsg("Localize uma pessoa primeiro.");
+                return;
+            }
+
+            let nome = listaPessoas[encontrada].nome;
+            let confirmar = confirm("Deseja deletar " + nome + "?");
+
+            if (!confirmar) return;
+
+            listaPessoas.splice(encontrada, 1);
+            encontrada = -1;
+
+            setMsg(nome + " foi removido(a). Restam " + listaPessoas.length + " pessoa(s).");
+            limparCadastro();
+        }
+
+        // ── LISTAR ────────────────────────────────────────────────────
+        function listar() {
+            let listados = document.getElementById("ilistados");
+
+            if (listaPessoas.length === 0) {
+                setMsg("Nenhuma pessoa cadastrada ainda.");
+                listados.innerHTML = "";
+                return;
+            }
+
+            let html = "";
+
+            for (let i = 0; i < listaPessoas.length; i++) {
+                html += "<div class='lista-item'>";
+                html += "<span class='lista-num'>" + (i + 1) + "</span>";
+                html += "<span>" + listaPessoas[i].nome + "</span>";
+                html += "<span>" + listaPessoas[i].cpf + "</span>";
+                html += "<span>" + listaPessoas[i].tel + "</span>";
+                html += "</div>";
+            }
+
+            listados.innerHTML = html;
+            setMsg(listaPessoas.length + " pessoa(s) cadastrada(s).");
+        }
+
+    </script>
+</body>
+
+</html>
